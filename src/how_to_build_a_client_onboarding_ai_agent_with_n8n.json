@@ -1,0 +1,487 @@
+{
+  "name": "how to build a client onboarding ai agent with n8n by nate herk",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Client Onboarding",
+        "formDescription": "Please fill the required fields.....",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "placeholder": "Your Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "placeholder": "Your Email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Comapny Industry",
+              "placeholder": "Eg: E-commerce",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "What are you hoping to achieve through our partnership in next three months?",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Anything else You should Know?"
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -280,
+        20
+      ],
+      "id": "a1c76006-1275-4fc5-92b7-7fcf99ba2e05",
+      "name": "On form submission",
+      "webhookId": "c82cb913-aba3-49c3-ac49-40028b0499b4"
+    },
+    {
+      "parameters": {
+        "agent": "conversationalAgent",
+        "promptType": "define",
+        "text": "=Can you please create a warm welcome email for a new client based on their information? We want the email to be concise and friendly, but also professional. It should be personalized to them based on their industry and what they are hoping to get out of our partnership. Here is information about the client:\n\nVariables:\n\nName: {{ $json.Name }}\nEmail: {{ $json.Email }}\nCompany Industry:{{ $json['Comapny Industry'] }} \nHoping to achieve: {{ $json['What are you hoping to achieve through our partnership in next three months?'] }} \nMake sure to always sign off the email from \"Pooja Anand.\" The company is \"Ecowoodies,\" and his position is \"Manager.\" Don't throw in variables for the sign-off. If information is unknown, we don’t ever want [Your Name], or [Your Contact Information], etc.\n\nOutput this information into 3 separate fields:\n\nSubject: The email’s subject\nBody: The email’s body\nEmail: {{ $json.Email }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        0,
+        0
+      ],
+      "id": "86c790dd-1698-461c-b081-7c31878e59ad",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        180
+      ],
+      "id": "57de2a56-0fc9-405a-bc68-3044f7d45f8c",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "DGwGnB58Yk61chmv",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "Parse the JSON query and output the parameters separately:\n\nSubject\nBody\nEmail"
+            },
+            {
+              "content": "={{ $json.output }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        380,
+        0
+      ],
+      "id": "3d183e67-6d89-40a1-a66e-8abcda9a020e",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "DGwGnB58Yk61chmv",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.message.content.Email }}",
+        "subject": "={{ $json.message.content.Subject }}",
+        "emailType": "text",
+        "message": "={{ $json.message.content.Body }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        720,
+        0
+      ],
+      "id": "59603c8c-682a-4caf-bb83-280e2ef80090",
+      "name": "Gmail",
+      "webhookId": "5ccdc829-a135-4239-960d-a5b096ffaf12",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YV6kBZB0oNCrvEcz",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "agent": "conversationalAgent",
+        "promptType": "define",
+        "text": "=Take the client information provided and create a summary of their client profile. Here is a client’s information:\n\nName:{{ $json.Name }}\nCompany Industry:{{ $json['Comapny Industry'] }}\nWhat are they hoping to achieve with us:\n\nOutput the following parameters separately:\nName:{{ $json.Name }}\nEmail:{{ $json.Email }}\nSummary: Summary of the client based on the information",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -20,
+        340
+      ],
+      "id": "6fb6fbbb-ef5d-4d34-9868-9bba84579aa9",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        520
+      ],
+      "id": "2f01a9c3-d6f5-4e63-955b-3d73bd4f39f1",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "DGwGnB58Yk61chmv",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "Parse the JSON queries into three separate fields\n\nName\nEmail\nSummary",
+              "role": "system"
+            },
+            {
+              "content": "={{ $json.output }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        340,
+        340
+      ],
+      "id": "0e497a86-6b3f-4e15-a251-479c78065e32",
+      "name": "OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "DGwGnB58Yk61chmv",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1pfIR9_MjgFY9TAe3xbqMfIAyhZj0V6pOFwEL-wQspSA/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pfIR9_MjgFY9TAe3xbqMfIAyhZj0V6pOFwEL-wQspSA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "abd": "={{ $json.message.content.Name }}",
+            "bcd": "={{ $json.message.content.Email }}",
+            "efg": "={{ $json.message.content.Summary }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "abd",
+              "displayName": "abd",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "bcd",
+              "displayName": "bcd",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "efg",
+              "displayName": "efg",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        700,
+        340
+      ],
+      "id": "1e9645cc-f7b5-452d-b864-a5158aaef095",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Re0Mr05DTgaD2UMf",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "On form submission": [
+      {
+        "json": {
+          "Name": "Saurabh",
+          "Email": "saurabhsinghbhandarissb@gmail.com",
+          "Comapny Industry": "Finance",
+          "What are you hoping to achieve through our partnership in next three months?": "I want to increase my business in finance sector upto 200% more than this",
+          "Anything else You should Know?": "I want genuine service",
+          "submittedAt": "2025-03-13T09:15:25.532-04:00",
+          "formMode": "test"
+        }
+      }
+    ],
+    "OpenAI": [
+      {
+        "json": {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": {
+              "Subject": "Welcome to Ecowoodies, Saurabh!",
+              "Body": "Dear Saurabh,\n\nWelcome aboard! We are thrilled to have you at Ecowoodies. We understand that you're aiming to increase your business in the finance sector by 200%, and we are here to support you in achieving that goal.\n\nAt Ecowoodies, we pride ourselves on building strong, successful partnerships, and we look forward to working together to help you reach your objectives. If you have any questions or need assistance, please feel free to reach out.\n\nBest regards,\nPooja Anand",
+              "Email": "saurabhsinghbhandarissb@gmail.com"
+            },
+            "refusal": null,
+            "annotations": []
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      }
+    ],
+    "AI Agent": [
+      {
+        "json": {
+          "output": "{\n    \"Subject\": \"Welcome to Ecowoodies, Saurabh!\",\n    \"Body\": \"Dear Saurabh,\\n\\nWelcome aboard! We are thrilled to have you at Ecowoodies. We understand that you're aiming to increase your business in the finance sector by 200%, and we are here to support you in achieving that goal.\\n\\nAt Ecowoodies, we pride ourselves on building strong, successful partnerships, and we look forward to working together to help you reach your objectives. If you have any questions or need assistance, please feel free to reach out.\\n\\nBest regards,\\nPooja Anand\",\n    \"Email\": \"saurabhsinghbhandarissb@gmail.com\"\n}"
+        }
+      }
+    ],
+    "Gmail": [
+      {
+        "json": {
+          "id": "196f278831db8fd5",
+          "threadId": "196f278831db8fd5",
+          "labelIds": [
+            "UNREAD",
+            "SENT",
+            "INBOX"
+          ]
+        }
+      }
+    ],
+    "AI Agent1": [
+      {
+        "json": {
+          "output": "{\n    \"Name\": \"Saurabh\",\n    \"Email\": \"saurabhsinghbhandarissb@gmail.com\",\n    \"Summary\": \"Saurabh is part of the finance industry and is looking to achieve specific goals with our services, although the exact objectives are not mentioned. Understanding these goals will help in crafting a tailored approach to meet his needs.\"\n}"
+        }
+      }
+    ],
+    "OpenAI1": [
+      {
+        "json": {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": {
+              "Name": "Saurabh",
+              "Email": "saurabhsinghbhandarissb@gmail.com",
+              "Summary": "Saurabh is part of the finance industry and is looking to achieve specific goals with our services, although the exact objectives are not mentioned. Understanding these goals will help in crafting a tailored approach to meet his needs."
+            },
+            "refusal": null,
+            "annotations": []
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      }
+    ],
+    "Google Sheets": [
+      {
+        "json": {
+          "abd": "Saurabh",
+          "bcd": "saurabhsinghbhandarissb@gmail.com",
+          "efg": "Saurabh is part of the finance industry and is looking to achieve specific goals with our services, although the exact objectives are not mentioned. Understanding these goals will help in crafting a tailored approach to meet his needs."
+        }
+      }
+    ]
+  },
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6288013c-1b08-43f8-9dcf-2d7597298738",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f5de2edd2d3a5f0cd37c0ee069a6c6fea6660cc24a9775035dd67bfdeb56e6ac"
+  },
+  "id": "E1sE7Un71EvWnOV8",
+  "tags": []
+}
