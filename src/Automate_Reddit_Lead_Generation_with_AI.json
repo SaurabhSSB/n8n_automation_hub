@@ -1,0 +1,729 @@
+{
+  "name": "Automate Reddit Lead Generation with AI",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -100,
+        20
+      ],
+      "id": "a4f5fa93-0a83-4ed1-b7cb-fff78d6e9398",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "subreddit": "datascience",
+        "keyword": "engineering",
+        "limit": 5,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.reddit",
+      "typeVersion": 1,
+      "position": [
+        120,
+        220
+      ],
+      "id": "77372021-85ed-4b2e-b83d-8dab77eefc5b",
+      "name": "Reddit",
+      "credentials": {
+        "redditOAuth2Api": {
+          "id": "kRifb4nvMcZ3aJ46",
+          "name": "Reddit account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "07f279f3-1168-412b-aad6-b76ac7a5ef59",
+              "name": "subreddit",
+              "value": "={{ $json.subreddit }}",
+              "type": "string"
+            },
+            {
+              "id": "78c02e58-a8ac-4880-b20f-33e95d6e3cc1",
+              "name": "selftext",
+              "value": "={{ $json.selftext }}",
+              "type": "string"
+            },
+            {
+              "id": "c0a10183-8f47-479a-835a-bf29174f0ab3",
+              "name": "title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "429e91a6-c987-401f-8201-f95feb87fecb",
+              "name": "post_url",
+              "value": "={{ $json.url }}",
+              "type": "string"
+            },
+            {
+              "id": "780f8939-ce92-4edf-96f2-f4a845ac81a0",
+              "name": "num_comments",
+              "value": "={{ $json.num_comments }}",
+              "type": "number"
+            },
+            {
+              "id": "73df31f7-08e9-4a83-9f0a-6da89f5db41c",
+              "name": "upvote_ratio",
+              "value": "={{ $json.upvote_ratio }}",
+              "type": "number"
+            },
+            {
+              "id": "79ba15bf-fe8e-4bcf-91f9-a25959bb9c15",
+              "name": "ups",
+              "value": "={{ $json.ups }}",
+              "type": "number"
+            },
+            {
+              "id": "aacb3f15-92f0-4f92-bbe3-d9b6e19d5453",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        260,
+        220
+      ],
+      "id": "4feefee1-69e7-4299-8d61-9d6f99f6e7c4",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 🔄 Get input items from Reddit and existing items from Google Sheets\nconst items = $input.all();\nconst existingPosts = $('Google Sheets').all();\n\n// ✅ Helper: Normalize URL (strip query params, lowercase, remove trailing slash)\nconst normalizeUrl = (url) => {\n    try {\n        const parsed = new URL(url.trim().toLowerCase());\n        return `${parsed.origin}${parsed.pathname}`.replace(/\\/$/, '');\n    } catch (e) {\n        return url.trim().toLowerCase().replace(/\\/$/, '');\n    }\n};\n\n// 🔍 Normalize existing post URLs\nconst existingUrls = existingPosts\n  .map(post => normalizeUrl(post.json.post_url || ''))\n  .filter(url => !!url);\n\nconsole.log('🔍 Input items from Reddit:', items.length);\nconsole.log('📄 Existing posts in Google Sheets:', existingUrls.length);\n\n// 🆕 Prepare array for new posts\nconst results = [];\n\nfor (const item of items) {\n    const rawUrl = item.json.post_url || '';\n    const currentUrl = normalizeUrl(rawUrl);\n\n    const isNewPost = !existingUrls.includes(currentUrl);\n    console.log(`📌 Checking: ${rawUrl} | Normalized: ${currentUrl} | New? ${isNewPost}`);\n\n    if (isNewPost) {\n        results.push({\n            ...item.json,\n            isNewPost: true\n        });\n    }\n}\n\n// 🚀 Return new posts or a debug object\nif (results.length === 0) {\n    console.log('❌ No new posts found. Returning debug info.');\n    return [{\n        json: {\n            message: \"No new posts found\",\n            inputUrls: items.map(i => i.json.post_url),\n            normalizedInputUrls: items.map(i => normalizeUrl(i.json.post_url || '')),\n            existingUrls\n        }\n    }];\n}\n\nconsole.log('✅ Returning', results.length, 'new post(s)');\nreturn results.map(item => ({ json: item }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        -20
+      ],
+      "id": "fecca868-35b4-4eea-b3eb-5de6d9835fe6",
+      "name": "Code",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        980,
+        60
+      ],
+      "id": "5bd2b97d-9ff5-4dce-8f30-dd4900a84852",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  const content = item.json.message.content;\n  return {\n    json: {\n      relevant_post: content.relevant_post,\n      comment: content.comment,\n      original_post_url: content.original_post_url\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1600,
+        -240
+      ],
+      "id": "4c6672c1-7056-4d99-b41c-0f661bb2c18d",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "280a2dde-2bae-428c-b1bf-e742da53a0d3",
+              "leftValue": "={{ $json.relevant_post }}",
+              "rightValue": "yes",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1920,
+        -240
+      ],
+      "id": "f512abfe-8331-455a-b855-8cc7db6cb2d1",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1WqIhi4BAG3owkIvmuvgT5xw9bvAIRtdiMaiR7N5FQrU",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1WqIhi4BAG3owkIvmuvgT5xw9bvAIRtdiMaiR7N5FQrU/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "relevant_post",
+              "displayName": "relevant_post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "comment",
+              "displayName": "comment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "original_post_url",
+              "displayName": "original_post_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2180,
+        -220
+      ],
+      "id": "f4b9669b-3637-428f-9982-cc2dafcc93c1",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Re0Mr05DTgaD2UMf",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1t_ffAUOvSORFV3-VTC7PG0uUncnHXgcMauvhRM744-g",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1t_ffAUOvSORFV3-VTC7PG0uUncnHXgcMauvhRM744-g/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "relevant_post",
+              "displayName": "relevant_post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "comment",
+              "displayName": "comment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "original_post_url",
+              "displayName": "original_post_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1940,
+        60
+      ],
+      "id": "bffd8c67-edd9-4651-8a1b-f427778a065c",
+      "name": "Google Sheets2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Re0Mr05DTgaD2UMf",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "postComment",
+        "postId": "={{ $json.original_post_url }}",
+        "commentText": "Revisiting this 🔂"
+      },
+      "type": "n8n-nodes-base.reddit",
+      "typeVersion": 1,
+      "position": [
+        1620,
+        280
+      ],
+      "id": "2fb8fbb4-c75b-456a-9f99-6420abbeddd7",
+      "name": "Reddit1",
+      "credentials": {
+        "redditOAuth2Api": {
+          "id": "kRifb4nvMcZ3aJ46",
+          "name": "Reddit account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1j8zC-793vRCwewr2Jtlgi8zpTNwW-PkYzz72PFAQQ7E",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1j8zC-793vRCwewr2Jtlgi8zpTNwW-PkYzz72PFAQQ7E/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        180,
+        -140
+      ],
+      "id": "a8c45e81-25f4-421e-aa82-fa01684d8bfa",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Re0Mr05DTgaD2UMf",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "agent": "conversationalAgent",
+        "promptType": "define",
+        "text": "=You are a data science expert helping identify Reddit posts that involve data-related problems in engineering contexts.\n\nTASK:\nEvaluate whether the following Reddit post discusses an issue that [Your Tool Name]—a data science solution for engineers—can help with.\n\nPOST DETAILS:\nTitle: {{ $json.title }}\nContent: {{ $json.selftext }}\nURL: {{ $json.post_url }}\n\nABOUT [Your Tool Name]:\n[Your Tool Name] is a data science tool designed for engineers. It:\n- Analyzes large datasets to uncover insights\n- Automates repetitive data processing and cleaning\n- Visualizes engineering metrics clearly\n- Provides real-time monitoring and alerting\n- Supports predictive maintenance modeling\n- Integrates with popular engineering platforms and databases\n- Reduces manual analysis time for engineering teams\n\nRELEVANT KEYWORDS & CONCEPTS:\n- engineering data, analytics, metrics\n- predictive maintenance, anomaly detection\n- sensor data, machine data, operational data\n- repetitive data tasks, time-consuming analysis\n- manual data cleaning, monitoring dashboards\n- engineering workflow, optimization\n- root cause analysis, statistical modeling\n\nEVALUATION QUESTIONS:\n1. Does the post mention data science or analytics in an engineering context?\n2. Does the post describe a problem that data science can solve (e.g. cleaning, monitoring, modeling)?\n3. Would [Your Tool Name] realistically provide value in this scenario?\n\nRESPONSE FORMAT:\nReturn only a valid JSON object like one of these examples:\n\n**Relevant Post Example:**\n{\n  \"relevant_post\": \"yes\",\n  \"comment\": \"This sounds like a perfect use case for [Your Tool Name]. It helps engineers automate data tasks, detect anomalies, and speed up analysis. You can check it out at https://www.yourtool.com\",\n  \"original_post_url\": \"{{ $json.post_url }}\"\n}\n\n**Irrelevant Post Example:**\n{\n  \"relevant_post\": \"no\",\n  \"comment\": \"\",\n  \"original_post_url\": \"{{ $json.post_url }}\"\n}\n\nCOMMENT RULES:\n- Be brief (max 3 sentences)\n- Be helpful, not salesy\n- Mention specific pain points from the post\n- Embed the website as a clickable link: https://www.yourtool.com\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1100,
+        -280
+      ],
+      "id": "51ec9b87-f6f1-489f-a669-67bcdbe485d0",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        960,
+        -160
+      ],
+      "id": "d81035cc-83aa-4830-b302-8ac91fa73ee2",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "DGwGnB58Yk61chmv",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a helpful assistant that evaluates Reddit posts to determine if they describe problems that [Your Tool Name]—a data science tool for engineers—can solve.\n\n[Your Tool Name] helps with:\n- Large dataset analysis for insights\n- Automating repetitive data cleaning and processing\n- Visualizing engineering metrics\n- Real-time monitoring and alerting\n- Predictive maintenance modeling\n- Reducing manual analysis time\n- Integrating with engineering databases and platforms\n\nRelevant concepts include:\n• engineering data, analytics, metrics  \n• predictive maintenance, anomaly detection  \n• sensor data, machine/operational data  \n• repetitive data tasks, time-consuming analysis  \n• monitoring dashboards, optimization  \n• root cause analysis, statistical modeling\n\n---\n\nTASK:\nGiven the Reddit post details below, determine if it's relevant to the use cases above. Output a valid JSON object with:\n- `\"relevant_post\"`: `\"yes\"` or `\"no\"`\n- `\"comment\"`: a helpful, short comment (if relevant) or an empty string (if not)\n- `\"original_post_url\"`: repeat the input post URL\n\n---\n\nReddit Post:\nTitle:   {{ $('Loop Over Items').item.json.title }}\nContent: {{ $('Loop Over Items').item.json.selftext }}\nURL:{{ $('Loop Over Items').item.json.post_url }}\n\n---\n\nEXAMPLES:\n\nRelevant Post:\n{\n  \"relevant_post\": \"yes\",\n  \"comment\": \"This sounds like a perfect use case for [Your Tool Name]. It helps engineers automate data tasks, detect anomalies, and speed up analysis. You can check it out at https://www.yourtool.com\",\n  \"original_post_url\": \"{{ $('Loop Over Items').item.json.post_url }}\"\n}\n\nIrrelevant Post:\n{\n  \"relevant_post\": \"no\",\n  \"comment\": \"\",\n  \"original_post_url\": \"{{ $('Loop Over Items').item.json.post_url}}\"\n}\n"
+            },
+            {
+              "content": "={{ $json.output }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1240,
+        -60
+      ],
+      "id": "3a2f3558-7a31-420c-b4ac-439325bea402",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "DGwGnB58Yk61chmv",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1j8zC-793vRCwewr2Jtlgi8zpTNwW-PkYzz72PFAQQ7E",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1j8zC-793vRCwewr2Jtlgi8zpTNwW-PkYzz72PFAQQ7E/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "post_url": "={{ $json.post_url }}",
+            "post_title": "={{ $json.title }}",
+            "post_content": "={{ $json.selftext }}",
+            "sub_reddit": "={{ $json.subreddit }}",
+            "comment": "={{ $json.num_comments }}"
+          },
+          "matchingColumns": [
+            "post_url"
+          ],
+          "schema": [
+            {
+              "id": "post_url",
+              "displayName": "post_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "comment",
+              "displayName": "comment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sub_reddit",
+              "displayName": "sub_reddit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "post_title",
+              "displayName": "post_title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "post_content",
+              "displayName": "post_content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        740,
+        -160
+      ],
+      "id": "2675584d-e96d-407c-9f43-659499614789",
+      "name": "Google Sheets3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Re0Mr05DTgaD2UMf",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Reddit",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reddit": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets2": {
+      "main": [
+        [
+          {
+            "node": "Reddit1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reddit1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c58b13d2-ca25-4bc6-90fb-ae481c9c2688",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f5de2edd2d3a5f0cd37c0ee069a6c6fea6660cc24a9775035dd67bfdeb56e6ac"
+  },
+  "id": "c1wJo3Or0HFRd7Kk",
+  "tags": []
+}
