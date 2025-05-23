@@ -6,10 +6,10 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -100,
-        20
+        -1200,
+        300
       ],
-      "id": "a4f5fa93-0a83-4ed1-b7cb-fff78d6e9398",
+      "id": "8fccc4c9-48de-4f52-9c78-2221b8f8e1f5",
       "name": "When clicking ‘Test workflow’"
     },
     {
@@ -23,10 +23,10 @@
       "type": "n8n-nodes-base.reddit",
       "typeVersion": 1,
       "position": [
-        120,
-        220
+        -980,
+        500
       ],
-      "id": "77372021-85ed-4b2e-b83d-8dab77eefc5b",
+      "id": "2f4bc476-3d10-41e7-a53c-e5447646c16c",
       "name": "Reddit",
       "credentials": {
         "redditOAuth2Api": {
@@ -94,10 +94,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        260,
-        220
+        -840,
+        500
       ],
-      "id": "4feefee1-69e7-4299-8d61-9d6f99f6e7c4",
+      "id": "6e66a019-2aaf-4b5b-a9e2-c62daff27611",
       "name": "Edit Fields"
     },
     {
@@ -107,10 +107,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        460,
-        -20
+        -640,
+        260
       ],
-      "id": "fecca868-35b4-4eea-b3eb-5de6d9835fe6",
+      "id": "68ed43a9-2e91-40cb-99b4-17ae5093eccc",
       "name": "Code",
       "alwaysOutputData": true
     },
@@ -121,10 +121,10 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        980,
-        60
+        -120,
+        340
       ],
-      "id": "5bd2b97d-9ff5-4dce-8f30-dd4900a84852",
+      "id": "779891de-aef3-486c-a50e-f26950ab8c3d",
       "name": "Loop Over Items"
     },
     {
@@ -134,10 +134,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1600,
-        -240
+        500,
+        40
       ],
-      "id": "4c6672c1-7056-4d99-b41c-0f661bb2c18d",
+      "id": "d76b2981-2422-48e4-a956-df377d43aadc",
       "name": "Code1"
     },
     {
@@ -168,10 +168,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        1920,
-        -240
+        820,
+        40
       ],
-      "id": "f512abfe-8331-455a-b855-8cc7db6cb2d1",
+      "id": "4f206300-3bc4-4c45-8200-e8035ce60bf3",
       "name": "If"
     },
     {
@@ -179,15 +179,15 @@
         "operation": "append",
         "documentId": {
           "__rl": true,
-          "value": "https://docs.google.com/spreadsheets/d/1WqIhi4BAG3owkIvmuvgT5xw9bvAIRtdiMaiR7N5FQrU",
+          "value": "https://docs.google.com/spreadsheets/d/1j8zC-793vRCwewr2Jtlgi8zpTNwW-PkYzz72PFAQQ7E",
           "mode": "url"
         },
         "sheetName": {
           "__rl": true,
-          "value": "gid=0",
+          "value": 2098880778,
           "mode": "list",
-          "cachedResultName": "Sheet1",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1WqIhi4BAG3owkIvmuvgT5xw9bvAIRtdiMaiR7N5FQrU/edit#gid=0"
+          "cachedResultName": "Sheet2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1j8zC-793vRCwewr2Jtlgi8zpTNwW-PkYzz72PFAQQ7E/edit#gid=2098880778"
         },
         "columns": {
           "mappingMode": "autoMapInputData",
@@ -201,8 +201,7 @@
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
+              "canBeUsedToMatch": true
             },
             {
               "id": "comment",
@@ -211,8 +210,7 @@
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
+              "canBeUsedToMatch": true
             },
             {
               "id": "original_post_url",
@@ -221,8 +219,7 @@
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
+              "canBeUsedToMatch": true
             }
           ],
           "attemptToConvertTypes": false,
@@ -233,10 +230,10 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
       "position": [
-        2180,
-        -220
+        1080,
+        60
       ],
-      "id": "f4b9669b-3637-428f-9982-cc2dafcc93c1",
+      "id": "033be4df-d7bb-41f5-a40b-b1dd893d1b55",
       "name": "Google Sheets1",
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -250,64 +247,25 @@
         "operation": "append",
         "documentId": {
           "__rl": true,
-          "value": "https://docs.google.com/spreadsheets/d/1t_ffAUOvSORFV3-VTC7PG0uUncnHXgcMauvhRM744-g",
+          "value": "https://docs.google.com/spreadsheets/d/1j8zC-793vRCwewr2Jtlgi8zpTNwW-PkYzz72PFAQQ7E",
           "mode": "url"
         },
         "sheetName": {
           "__rl": true,
-          "value": "gid=0",
+          "value": 522244912,
           "mode": "list",
-          "cachedResultName": "Sheet1",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1t_ffAUOvSORFV3-VTC7PG0uUncnHXgcMauvhRM744-g/edit#gid=0"
-        },
-        "columns": {
-          "mappingMode": "autoMapInputData",
-          "value": {},
-          "matchingColumns": [],
-          "schema": [
-            {
-              "id": "relevant_post",
-              "displayName": "relevant_post",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "comment",
-              "displayName": "comment",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "original_post_url",
-              "displayName": "original_post_url",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
+          "cachedResultName": "Sheet3",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1j8zC-793vRCwewr2Jtlgi8zpTNwW-PkYzz72PFAQQ7E/edit#gid=522244912"
         },
         "options": {}
       },
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
       "position": [
-        1940,
-        60
+        840,
+        340
       ],
-      "id": "bffd8c67-edd9-4651-8a1b-f427778a065c",
+      "id": "6f7111a2-4dcb-4ca2-9028-f39f02ffada7",
       "name": "Google Sheets2",
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -325,10 +283,10 @@
       "type": "n8n-nodes-base.reddit",
       "typeVersion": 1,
       "position": [
-        1620,
-        280
+        520,
+        560
       ],
-      "id": "2fb8fbb4-c75b-456a-9f99-6420abbeddd7",
+      "id": "595126f1-34b4-4141-ad02-48174ab0f694",
       "name": "Reddit1",
       "credentials": {
         "redditOAuth2Api": {
@@ -356,10 +314,10 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
       "position": [
-        180,
-        -140
+        -920,
+        140
       ],
-      "id": "a8c45e81-25f4-421e-aa82-fa01684d8bfa",
+      "id": "68947c19-f2e9-4f78-b3a2-3a43f59c1b0e",
       "name": "Google Sheets",
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -372,16 +330,16 @@
       "parameters": {
         "agent": "conversationalAgent",
         "promptType": "define",
-        "text": "=You are a data science expert helping identify Reddit posts that involve data-related problems in engineering contexts.\n\nTASK:\nEvaluate whether the following Reddit post discusses an issue that [Your Tool Name]—a data science solution for engineers—can help with.\n\nPOST DETAILS:\nTitle: {{ $json.title }}\nContent: {{ $json.selftext }}\nURL: {{ $json.post_url }}\n\nABOUT [Your Tool Name]:\n[Your Tool Name] is a data science tool designed for engineers. It:\n- Analyzes large datasets to uncover insights\n- Automates repetitive data processing and cleaning\n- Visualizes engineering metrics clearly\n- Provides real-time monitoring and alerting\n- Supports predictive maintenance modeling\n- Integrates with popular engineering platforms and databases\n- Reduces manual analysis time for engineering teams\n\nRELEVANT KEYWORDS & CONCEPTS:\n- engineering data, analytics, metrics\n- predictive maintenance, anomaly detection\n- sensor data, machine data, operational data\n- repetitive data tasks, time-consuming analysis\n- manual data cleaning, monitoring dashboards\n- engineering workflow, optimization\n- root cause analysis, statistical modeling\n\nEVALUATION QUESTIONS:\n1. Does the post mention data science or analytics in an engineering context?\n2. Does the post describe a problem that data science can solve (e.g. cleaning, monitoring, modeling)?\n3. Would [Your Tool Name] realistically provide value in this scenario?\n\nRESPONSE FORMAT:\nReturn only a valid JSON object like one of these examples:\n\n**Relevant Post Example:**\n{\n  \"relevant_post\": \"yes\",\n  \"comment\": \"This sounds like a perfect use case for [Your Tool Name]. It helps engineers automate data tasks, detect anomalies, and speed up analysis. You can check it out at https://www.yourtool.com\",\n  \"original_post_url\": \"{{ $json.post_url }}\"\n}\n\n**Irrelevant Post Example:**\n{\n  \"relevant_post\": \"no\",\n  \"comment\": \"\",\n  \"original_post_url\": \"{{ $json.post_url }}\"\n}\n\nCOMMENT RULES:\n- Be brief (max 3 sentences)\n- Be helpful, not salesy\n- Mention specific pain points from the post\n- Embed the website as a clickable link: https://www.yourtool.com\n",
+        "text": "=You are a data science expert helping identify Reddit posts that involve data-related problems in engineering contexts.\n\nTASK:\nEvaluate whether the following Reddit post discusses an issue that [Your Tool Name]—a data science solution for engineers—can help with.\n\nPOST DETAILS:\nTitle: {{ $json.title }}\nContent: {{ $json.selftext }}\nURL: {{ $json.post_url }}\n\nABOUT AI Automation:\nAi Automation is a data science tool designed for engineers. It:\n- Analyzes large datasets to uncover insights\n- Automates repetitive data processing and cleaning\n- Visualizes engineering metrics clearly\n- Provides real-time monitoring and alerting\n- Supports predictive maintenance modeling\n- Integrates with popular engineering platforms and databases\n- Reduces manual analysis time for engineering teams\n\nRELEVANT KEYWORDS & CONCEPTS:\n- engineering data, analytics, metrics\n- predictive maintenance, anomaly detection\n- sensor data, machine data, operational data\n- repetitive data tasks, time-consuming analysis\n- manual data cleaning, monitoring dashboards\n- engineering workflow, optimization\n- root cause analysis, statistical modeling\n\nEVALUATION QUESTIONS:\n1. Does the post mention data science or analytics in an engineering context?\n2. Does the post describe a problem that data science can solve (e.g. cleaning, monitoring, modeling)?\n3. Would [Your Tool Name] realistically provide value in this scenario?\n\nRESPONSE FORMAT:\nReturn only a valid JSON object like one of these examples:\n\n**Relevant Post Example:**\n{\n  \"relevant_post\": \"yes\",\n  \"comment\": \"This sounds like a perfect use case for [Your Tool Name]. It helps engineers automate data tasks, detect anomalies, and speed up analysis. You can check it out at https://www.yourtool.com\",\n  \"original_post_url\": \"{{ $json.post_url }}\"\n}\n\n**Irrelevant Post Example:**\n{\n  \"relevant_post\": \"no\",\n  \"comment\": \"\",\n  \"original_post_url\": \"{{ $json.post_url }}\"\n}\n\nCOMMENT RULES:\n- Be brief (max 3 sentences)\n- Be helpful, not salesy\n- Mention specific pain points from the post\n- Embed the website as a clickable link: https://www.yourtool.com\n",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [
-        1100,
-        -280
+        0,
+        0
       ],
-      "id": "51ec9b87-f6f1-489f-a669-67bcdbe485d0",
+      "id": "22fb06e3-fcb0-4a59-b065-6713897c566f",
       "name": "AI Agent"
     },
     {
@@ -396,10 +354,10 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [
-        960,
-        -160
+        -140,
+        120
       ],
-      "id": "d81035cc-83aa-4830-b302-8ac91fa73ee2",
+      "id": "7043bbfd-628f-46c7-9638-8138750fcc12",
       "name": "OpenAI Chat Model",
       "credentials": {
         "openAiApi": {
@@ -419,7 +377,7 @@
         "messages": {
           "values": [
             {
-              "content": "=You are a helpful assistant that evaluates Reddit posts to determine if they describe problems that [Your Tool Name]—a data science tool for engineers—can solve.\n\n[Your Tool Name] helps with:\n- Large dataset analysis for insights\n- Automating repetitive data cleaning and processing\n- Visualizing engineering metrics\n- Real-time monitoring and alerting\n- Predictive maintenance modeling\n- Reducing manual analysis time\n- Integrating with engineering databases and platforms\n\nRelevant concepts include:\n• engineering data, analytics, metrics  \n• predictive maintenance, anomaly detection  \n• sensor data, machine/operational data  \n• repetitive data tasks, time-consuming analysis  \n• monitoring dashboards, optimization  \n• root cause analysis, statistical modeling\n\n---\n\nTASK:\nGiven the Reddit post details below, determine if it's relevant to the use cases above. Output a valid JSON object with:\n- `\"relevant_post\"`: `\"yes\"` or `\"no\"`\n- `\"comment\"`: a helpful, short comment (if relevant) or an empty string (if not)\n- `\"original_post_url\"`: repeat the input post URL\n\n---\n\nReddit Post:\nTitle:   {{ $('Loop Over Items').item.json.title }}\nContent: {{ $('Loop Over Items').item.json.selftext }}\nURL:{{ $('Loop Over Items').item.json.post_url }}\n\n---\n\nEXAMPLES:\n\nRelevant Post:\n{\n  \"relevant_post\": \"yes\",\n  \"comment\": \"This sounds like a perfect use case for [Your Tool Name]. It helps engineers automate data tasks, detect anomalies, and speed up analysis. You can check it out at https://www.yourtool.com\",\n  \"original_post_url\": \"{{ $('Loop Over Items').item.json.post_url }}\"\n}\n\nIrrelevant Post:\n{\n  \"relevant_post\": \"no\",\n  \"comment\": \"\",\n  \"original_post_url\": \"{{ $('Loop Over Items').item.json.post_url}}\"\n}\n"
+              "content": "=You are a helpful assistant that evaluates Reddit posts to determine if they describe problems that AI Automation—a data science tool for engineers—can solve.\n\nAI Automation helps with:\n- Large dataset analysis for insights\n- Automating repetitive data cleaning and processing\n- Visualizing engineering metrics\n- Real-time monitoring and alerting\n- Predictive maintenance modeling\n- Reducing manual analysis time\n- Integrating with engineering databases and platforms\n\nRelevant concepts include:\n• engineering data, analytics, metrics  \n• predictive maintenance, anomaly detection  \n• sensor data, machine/operational data  \n• repetitive data tasks, time-consuming analysis  \n• monitoring dashboards, optimization  \n• root cause analysis, statistical modeling\n\n---\n\nTASK:\nGiven the Reddit post details below, determine if it's relevant to the use cases above. Output a valid JSON object with:\n- `\"relevant_post\"`: `\"yes\"` or `\"no\"`\n- `\"comment\"`: a helpful, short comment (if relevant) or an empty string (if not)\n- `\"original_post_url\"`: repeat the input post URL\n\n---\n\nReddit Post:\nTitle:   {{ $('Loop Over Items').item.json.title }}\nContent: {{ $('Loop Over Items').item.json.selftext }}\nURL:{{ $('Loop Over Items').item.json.post_url }}\n\n---\n\nEXAMPLES:\n\nRelevant Post:\n{\n  \"relevant_post\": \"yes\",\n  \"comment\": \"This sounds like a perfect use case for [Your Tool Name]. It helps engineers automate data tasks, detect anomalies, and speed up analysis. You can check it out at https://www.yourtool.com\",\n  \"original_post_url\": \"{{ $('Loop Over Items').item.json.post_url }}\"\n}\n\nIrrelevant Post:\n{\n  \"relevant_post\": \"no\",\n  \"comment\": \"\",\n  \"original_post_url\": \"{{ $('Loop Over Items').item.json.post_url}}\"\n}\n"
             },
             {
               "content": "={{ $json.output }}"
@@ -432,10 +390,10 @@
       "type": "@n8n/n8n-nodes-langchain.openAi",
       "typeVersion": 1.8,
       "position": [
-        1240,
-        -60
+        140,
+        220
       ],
-      "id": "3a2f3558-7a31-420c-b4ac-439325bea402",
+      "id": "b32ede94-4600-402c-858a-1baebccbf71d",
       "name": "OpenAI",
       "credentials": {
         "openAiApi": {
@@ -527,10 +485,10 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
       "position": [
-        740,
-        -160
+        -360,
+        120
       ],
-      "id": "2675584d-e96d-407c-9f43-659499614789",
+      "id": "b6438266-13a4-4a9f-9f5a-a4e48549f6a0",
       "name": "Google Sheets3",
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -719,11 +677,10 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "c58b13d2-ca25-4bc6-90fb-ae481c9c2688",
+  "versionId": "f529caa8-2098-4918-8678-846a9b250a96",
   "meta": {
-    "templateCredsSetupCompleted": true,
     "instanceId": "f5de2edd2d3a5f0cd37c0ee069a6c6fea6660cc24a9775035dd67bfdeb56e6ac"
   },
-  "id": "c1wJo3Or0HFRd7Kk",
+  "id": "dpSGF6WjU06HKT6H",
   "tags": []
 }
