@@ -17,7 +17,7 @@
         "operation": "search",
         "subreddit": "datascience",
         "keyword": "engineering",
-        "limit": 5,
+        "returnAll": true,
         "additionalFields": {}
       },
       "type": "n8n-nodes-base.reddit",
@@ -30,7 +30,7 @@
       "name": "Reddit",
       "credentials": {
         "redditOAuth2Api": {
-          "id": "kRifb4nvMcZ3aJ46",
+          "id": "fquykudR3n1cfLbQ",
           "name": "Reddit account"
         }
       }
@@ -94,7 +94,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -840,
+        -760,
         500
       ],
       "id": "6e66a019-2aaf-4b5b-a9e2-c62daff27611",
@@ -257,6 +257,42 @@
           "cachedResultName": "Sheet3",
           "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1j8zC-793vRCwewr2Jtlgi8zpTNwW-PkYzz72PFAQQ7E/edit#gid=522244912"
         },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "relevant_post",
+              "displayName": "relevant_post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "comment",
+              "displayName": "comment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "original_post_url",
+              "displayName": "original_post_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
         "options": {}
       },
       "type": "n8n-nodes-base.googleSheets",
@@ -290,7 +326,7 @@
       "name": "Reddit1",
       "credentials": {
         "redditOAuth2Api": {
-          "id": "kRifb4nvMcZ3aJ46",
+          "id": "fquykudR3n1cfLbQ",
           "name": "Reddit account"
         }
       }
@@ -330,7 +366,7 @@
       "parameters": {
         "agent": "conversationalAgent",
         "promptType": "define",
-        "text": "=You are a data science expert helping identify Reddit posts that involve data-related problems in engineering contexts.\n\nTASK:\nEvaluate whether the following Reddit post discusses an issue that [Your Tool Name]—a data science solution for engineers—can help with.\n\nPOST DETAILS:\nTitle: {{ $json.title }}\nContent: {{ $json.selftext }}\nURL: {{ $json.post_url }}\n\nABOUT AI Automation:\nAi Automation is a data science tool designed for engineers. It:\n- Analyzes large datasets to uncover insights\n- Automates repetitive data processing and cleaning\n- Visualizes engineering metrics clearly\n- Provides real-time monitoring and alerting\n- Supports predictive maintenance modeling\n- Integrates with popular engineering platforms and databases\n- Reduces manual analysis time for engineering teams\n\nRELEVANT KEYWORDS & CONCEPTS:\n- engineering data, analytics, metrics\n- predictive maintenance, anomaly detection\n- sensor data, machine data, operational data\n- repetitive data tasks, time-consuming analysis\n- manual data cleaning, monitoring dashboards\n- engineering workflow, optimization\n- root cause analysis, statistical modeling\n\nEVALUATION QUESTIONS:\n1. Does the post mention data science or analytics in an engineering context?\n2. Does the post describe a problem that data science can solve (e.g. cleaning, monitoring, modeling)?\n3. Would [Your Tool Name] realistically provide value in this scenario?\n\nRESPONSE FORMAT:\nReturn only a valid JSON object like one of these examples:\n\n**Relevant Post Example:**\n{\n  \"relevant_post\": \"yes\",\n  \"comment\": \"This sounds like a perfect use case for [Your Tool Name]. It helps engineers automate data tasks, detect anomalies, and speed up analysis. You can check it out at https://www.yourtool.com\",\n  \"original_post_url\": \"{{ $json.post_url }}\"\n}\n\n**Irrelevant Post Example:**\n{\n  \"relevant_post\": \"no\",\n  \"comment\": \"\",\n  \"original_post_url\": \"{{ $json.post_url }}\"\n}\n\nCOMMENT RULES:\n- Be brief (max 3 sentences)\n- Be helpful, not salesy\n- Mention specific pain points from the post\n- Embed the website as a clickable link: https://www.yourtool.com\n",
+        "text": "=You are a data science expert helping identify Reddit posts that involve data-related problems in engineering contexts.\n\nTASK:\nEvaluate whether the following Reddit post discusses an issue that AI Automation— a data science solution for engineers—can help with.\n\nPOST DETAILS:\nTitle: {{ $json.title }}\nContent: {{ $json.selftext }}\nURL: {{ $json.post_url }}\n\nABOUT AI Automation:\nAi Automation is a data science tool designed for engineers. It:\n- Analyzes large datasets to uncover insights\n- Automates repetitive data processing and cleaning\n- Visualizes engineering metrics clearly\n- Provides real-time monitoring and alerting\n- Supports predictive maintenance modeling\n- Integrates with popular engineering platforms and databases\n- Reduces manual analysis time for engineering teams\n\nRELEVANT KEYWORDS & CONCEPTS:\n- engineering data, analytics, metrics\n- predictive maintenance, anomaly detection\n- sensor data, machine data, operational data\n- repetitive data tasks, time-consuming analysis\n- manual data cleaning, monitoring dashboards\n- engineering workflow, optimization\n- root cause analysis, statistical modeling\n\nEVALUATION QUESTIONS:\n1. Does the post mention data science or analytics in an engineering context?\n2. Does the post describe a problem that data science can solve (e.g. cleaning, monitoring, modeling)?\n3. Would [Your Tool Name] realistically provide value in this scenario?\n\nRESPONSE FORMAT:\nReturn only a valid JSON object like one of these examples:\n\n**Relevant Post Example:**\n{\n  \"relevant_post\": \"yes\",\n  \"comment\": \"This sounds like a perfect use case for [Your Tool Name]. It helps engineers automate data tasks, detect anomalies, and speed up analysis,\n  \"original_post_url\": \"{{ $json.post_url }}\"\n}\n\n**Irrelevant Post Example:**\n{\n  \"relevant_post\": \"no\",\n  \"comment\": \"\",\n  \"original_post_url\": \"{{ $json.post_url }}\"\n}\n\nCOMMENT RULES:\n- Be brief (max 3 sentences)\n- Be helpful, not salesy\n- Mention specific pain points from the post\n",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
@@ -377,7 +413,7 @@
         "messages": {
           "values": [
             {
-              "content": "=You are a helpful assistant that evaluates Reddit posts to determine if they describe problems that AI Automation—a data science tool for engineers—can solve.\n\nAI Automation helps with:\n- Large dataset analysis for insights\n- Automating repetitive data cleaning and processing\n- Visualizing engineering metrics\n- Real-time monitoring and alerting\n- Predictive maintenance modeling\n- Reducing manual analysis time\n- Integrating with engineering databases and platforms\n\nRelevant concepts include:\n• engineering data, analytics, metrics  \n• predictive maintenance, anomaly detection  \n• sensor data, machine/operational data  \n• repetitive data tasks, time-consuming analysis  \n• monitoring dashboards, optimization  \n• root cause analysis, statistical modeling\n\n---\n\nTASK:\nGiven the Reddit post details below, determine if it's relevant to the use cases above. Output a valid JSON object with:\n- `\"relevant_post\"`: `\"yes\"` or `\"no\"`\n- `\"comment\"`: a helpful, short comment (if relevant) or an empty string (if not)\n- `\"original_post_url\"`: repeat the input post URL\n\n---\n\nReddit Post:\nTitle:   {{ $('Loop Over Items').item.json.title }}\nContent: {{ $('Loop Over Items').item.json.selftext }}\nURL:{{ $('Loop Over Items').item.json.post_url }}\n\n---\n\nEXAMPLES:\n\nRelevant Post:\n{\n  \"relevant_post\": \"yes\",\n  \"comment\": \"This sounds like a perfect use case for [Your Tool Name]. It helps engineers automate data tasks, detect anomalies, and speed up analysis. You can check it out at https://www.yourtool.com\",\n  \"original_post_url\": \"{{ $('Loop Over Items').item.json.post_url }}\"\n}\n\nIrrelevant Post:\n{\n  \"relevant_post\": \"no\",\n  \"comment\": \"\",\n  \"original_post_url\": \"{{ $('Loop Over Items').item.json.post_url}}\"\n}\n"
+              "content": "=You are a helpful assistant that evaluates Reddit posts to determine if they describe problems that AI Automation—a data science tool for engineers—can solve.\n\nAI Automation helps with:\n- Large dataset analysis for insights\n- Automating repetitive data cleaning and processing\n- Visualizing engineering metrics\n- Real-time monitoring and alerting\n- Predictive maintenance modeling\n- Reducing manual analysis time\n- Integrating with engineering databases and platforms\n\nRelevant concepts include:\n• engineering data, analytics, metrics  \n• predictive maintenance, anomaly detection  \n• sensor data, machine/operational data  \n• repetitive data tasks, time-consuming analysis  \n• monitoring dashboards, optimization  \n• root cause analysis, statistical modeling\n\n---\n\nTASK:\nGiven the Reddit post details below, determine if it's relevant to the use cases above. Output a valid JSON object with:\n- `\"relevant_post\"`: `\"yes\"` or `\"no\"`\n- `\"comment\"`: a helpful, short comment (if relevant) or an empty string (if not)\n- `\"original_post_url\"`: repeat the input post URL\n\n---\n\nReddit Post:\nTitle:   {{ $('Loop Over Items').item.json.title }}\nContent: {{ $('Loop Over Items').item.json.selftext }}\nURL:{{ $('Loop Over Items').item.json.post_url }}\n\n---\n\nEXAMPLES:\n\nRelevant Post:\n{\n  \"relevant_post\": \"yes\",\n  \"comment\": \"This sounds like a perfect use case for AI Automation. It helps engineers automate data tasks, detect anomalies, and speed up analysis,\n  \"original_post_url\": \"{{ $('Loop Over Items').item.json.post_url }}\"\n}\n\nIrrelevant Post:\n{\n  \"relevant_post\": \"no\",\n  \"comment\": \"\",\n  \"original_post_url\": \"{{ $('Loop Over Items').item.json.post_url}}\"\n}\n"
             },
             {
               "content": "={{ $json.output }}"
@@ -613,19 +649,18 @@
             "node": "Reddit1",
             "type": "main",
             "index": 0
-          }
-        ]
-      ]
-    },
-    "Reddit1": {
-      "main": [
-        [
+          },
           {
             "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
         ]
+      ]
+    },
+    "Reddit1": {
+      "main": [
+        []
       ]
     },
     "Google Sheets": {
@@ -677,8 +712,9 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "f529caa8-2098-4918-8678-846a9b250a96",
+  "versionId": "f769b80e-d195-42f6-a351-0ec330726a0a",
   "meta": {
+    "templateCredsSetupCompleted": true,
     "instanceId": "f5de2edd2d3a5f0cd37c0ee069a6c6fea6660cc24a9775035dd67bfdeb56e6ac"
   },
   "id": "dpSGF6WjU06HKT6H",
